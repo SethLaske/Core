@@ -1,48 +1,39 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Core.Scripts
 {
     public class SaveFile
     {
-        private readonly Dictionary<string, object> savedData;
+        // We use a dictionary directly. Newtonsoft knows how to handle this.
+        private Dictionary<string, string> savedJsons;
 
         public SaveFile()
         {
-            savedData = new Dictionary<string, object>();
+            savedJsons = new Dictionary<string, string>();
         }
 
-        public void SaveString(string argKey, string argStringValue)
+        public void InsertSavedJson(string argSaveKey, string argSaveObject)
         {
-            savedData[argKey] = argStringValue;
+            savedJsons[argSaveKey] = argSaveObject;
         }
 
-        public string GetString(string argKey, string argDefault = "")
+        public bool TryGetSavedJson(string argSaveKey, out string saveObject)
         {
-            if (savedData.TryGetValue(argKey, out object stringValue))
-            {
-                return stringValue.ToString();
-            }
-
-            return argDefault;
+            return savedJsons.TryGetValue(argSaveKey, out saveObject);
         }
 
-        public void SaveInt(string argKey, int argValue)
+        public string Serialize()
         {
-            savedData[argKey] = argValue;
+            // Use the full namespace to resolve the ambiguity
+            return JsonConvert.SerializeObject(savedJsons, Newtonsoft.Json.Formatting.Indented);
         }
 
-        public int GetInt(string argKey, int argDefault = 0)
+        public void Deserialize(string json)
         {
-            if (savedData.TryGetValue(argKey, out object value))
-            {
-                if (value is int intValue)
-                {
-                    return intValue;
-                }
-            }
+            if (string.IsNullOrEmpty(json)) return;
 
-            return argDefault;
+            savedJsons = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         }
-        
     }
 }

@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace Core.Scripts
 {
-    public abstract class ManagerBase<T> : MonoBehaviour where T : ManagerBase<T>, ISaveable
+    public abstract class SingletonBase<T> : MonoBehaviour where T : SingletonBase<T>
     {
-        public static T instance;
+        public static T instance { get; private set; }
 
         public virtual void Awake()
         {
@@ -13,25 +13,19 @@ namespace Core.Scripts
                 instance = this as T;
             }
         }
+    }
+    
+    public abstract class ManagerBase<T> : SingletonBase<T>, ISaveable, IUpdateable where T : ManagerBase<T>
+    {
+        public virtual void DoFirstUpdate() { }
 
-        protected virtual void DoFirstUpdate()
+        public virtual void DoUpdate(TimeValues argTime) { }
+
+        public string saveID { get; }
+
+        public virtual string SaveData()
         {
-
-        }
-
-        public virtual void DoUpdate(TimeValues argTime)
-        {
-
-        }
-
-        public virtual void SaveData(SaveFile argSaveFile)
-        {
-
-        }
-
-        public virtual void LoadData(SaveFile argSaveFile)
-        {
-
+            return "";
         }
     }
 }

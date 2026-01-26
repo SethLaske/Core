@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Core.Scripts
 {
-    public class Logger
+    public class CoreLogger
     {
         public static void Log(string argMessage, LogType argLogType = LogType.Normal, Color argColor = default)
         {

@@ -1,28 +1,31 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Core.Scripts
 {
-    public class GameManager : ManagerBase<GameManager>, ISaveable
+    public class GameManager : ManagerBase<GameManager>
     {
         private bool initialized = false;
 
-        private SaveFile activeSaveFile;
+        private CoreStats coreStats;
 
         public override void Awake()
         {
             base.Awake();
 
-            activeSaveFile = new SaveFile();
+            coreStats = new CoreStats();
+        }
+
+        public override void DoFirstUpdate()
+        {
+            base.DoFirstUpdate();
+            
+            coreStats.DoFirstUpdate();
         }
 
         public void Update()
         {
             if (initialized == false)
             {
-                LoadPlayerData();
                 DoFirstUpdate();
                 initialized = true;
             }
@@ -34,18 +37,21 @@ namespace Core.Scripts
         {
             if (initialized == false)
             {
-                Logger.LogError("Game Manager not initialized", true);
+                CoreLogger.LogError("Game Manager not initialized", true);
             }
-        }
+            
+            coreStats.DoUpdate(argTime);
 
-        public void LoadPlayerData()
-        {
 
+            if (Input.GetMouseButtonDown(0))
+            {
+                SavePlayerData();
+            }
         }
 
         public void SavePlayerData()
         {
-
+            SaveSingleton.instance.SaveData();
         }
     }
 }
