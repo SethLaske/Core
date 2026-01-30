@@ -42,10 +42,19 @@ namespace Core.Scripts
             
             coreStats.DoUpdate(argTime);
 
+            IntervalManager.instance.DoUpdate(argTime);
 
             if (Input.GetMouseButtonDown(0))
             {
-                SavePlayerData();
+                new Interval(1, 2, 
+                    () => {CoreLogger.Log("Delay Finished"); }, 
+                    (t) => {CoreLogger.Log($"Progress {t}"); },
+                    () =>
+                    {
+                        CoreLogger.Log("Duration Finished");
+                        SavePlayerData();
+                    }).Start();
+                
             }
         }
 

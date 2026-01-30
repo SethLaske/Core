@@ -1,55 +1,41 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Core.Scripts
 {
-    public class IntervalManager : ManagerBase<GameManager>, ISaveable
+    public class IntervalManager : ManagerBase<IntervalManager>
     {
-        private List<Interval> allIntervals = new List<Interval>();
-
-        private List<Interval> newIntervals = new List<Interval>();
-        private List<Interval> endedIntervals = new List<Interval>();
+        private List<Interval> runningIntervals = new List<Interval>();
+        private List<Interval> queuedIntervals = new List<Interval>();
 
         public override void DoUpdate(TimeValues argTime)
         {
-            if (newIntervals.Count > 0)
+            if (queuedIntervals.Count > 0)
             {
-                foreach (Interval newCountdown in newIntervals)
+                runningIntervals.AddRange(queuedIntervals);
+                queuedIntervals.Clear();
+            }
+
+            List<Interval> finishedIntervals = new List<Interval>();
+            
+            foreach (Interval interval in runningIntervals)
+            {
+                if (interval.UpdateInterval(argTime.deltaTime))
                 {
-                    allIntervals.Add(newCountdown);
+                    finishedIntervals.Add(interval);
                 }
-
-                newIntervals.Clear();
             }
 
-            if (endedIntervals.Count > 0)
+            while (finishedIntervals.Count > 0)
             {
-                foreach (Interval endedCountdown in endedIntervals)
-                {
-                    if (allIntervals.Contains(endedCountdown))
-                    {
-                        allIntervals.Remove(endedCountdown);
-                    }
-                }
-
-                endedIntervals.Clear();
-            }
-
-            foreach (Interval countdown in allIntervals)
-            {
-                //countdown.UpdateTimer(delta);
+                runningIntervals.Remove(finishedIntervals[0]);
+                finishedIntervals.RemoveAt(0);
             }
         }
 
-        //New and ended countdowns are handled seperately to avoid errors with foreach loops
-        public void AddNewCountdown(Interval argCountdown)
+        public void AddInterval(Interval interval)
         {
-            newIntervals.Add(argCountdown);
+            queuedIntervals.Add(interval);
         }
-
-        public void AddEndedCountdown(Interval argEndedCountdown)
-        {
-            endedIntervals.Add(argEndedCountdown);
-        }
-
     }
 }

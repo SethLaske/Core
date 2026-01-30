@@ -94,8 +94,7 @@ namespace Core.Scripts
             argSaveObject.SetData(savedJson);
             return true;
         }
-
-        // Unity Editor Menu Item
+        
 #if UNITY_EDITOR
         [MenuItem("Core/Clear Save File")]
         public static void ClearSaveFile()
@@ -108,6 +107,18 @@ namespace Core.Scripts
             else
             {
                 CoreLogger.Log("No save file found to delete.", LogType.Warning);
+            }
+        }
+        [MenuItem("Core/Open Save File")]
+        public static void OpenSaveFile()
+        {
+            if (File.Exists(SavePath))
+            {
+                EditorUtility.RevealInFinder(SavePath);
+            }
+            else
+            {
+                CoreLogger.Log("No save file found to access.", LogType.Warning);
             }
         }
 #endif
