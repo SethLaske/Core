@@ -17,15 +17,21 @@ namespace Core.Scripts
     
     public abstract class ManagerBase<T> : SingletonBase<T>, ISaveable, IUpdateable where T : ManagerBase<T>
     {
-        public virtual void DoFirstUpdate() { }
+        public virtual void DoFirstUpdate()
+        {
+            SaveSingleton.instance.AddToSaveList(this);
+            LoadData();
+        }
 
         public virtual void DoUpdate(TimeValues argTime) { }
 
-        public string saveID { get; }
+        public virtual string saveID => "DEFAULT";
 
         public virtual string SaveData()
         {
             return "";
         }
+        
+        protected virtual void LoadData() { }
     }
 }

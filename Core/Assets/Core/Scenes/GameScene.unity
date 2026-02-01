@@ -440,7 +440,7 @@ AudioSource:
   m_GameObject: {fileID: 732899636}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -5948233253244911080, guid: accbb24bd45f0ec4c8332df60a2f358f, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -547,8 +547,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5f60c1e8713e1641b359b5b3f062602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sfxPrefab: {fileID: 3608880771751839599, guid: 1c402fe4a61ba5242b1cef105466afd2, type: 3}
+  mainMixer: {fileID: 24100000, guid: accbb24bd45f0ec4c8332df60a2f358f, type: 2}
   clipsConfig: {fileID: 11400000, guid: 3b8effdd9ccd13941b85ea6087de718a, type: 2}
+  sfxPrefab: {fileID: 3608880771751839599, guid: 1c402fe4a61ba5242b1cef105466afd2, type: 3}
   defaultPoolSize: 20
   musicSource: {fileID: 732899638}
 --- !u!1 &1840156110

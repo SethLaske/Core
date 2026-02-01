@@ -1,16 +1,24 @@
+using System;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Core.Scripts
 {
     public class AudioManager : ManagerBase<AudioManager>
     {
+        public override string saveID => "AudioManager";
+        private AudioManagerSaveObject loadedAudioSave;
+
         [Header("Settings")] 
         [SerializeField] 
-        private PooledAudioSource sfxPrefab;
-
+        private AudioMixer mainMixer;
+        
         [SerializeField] 
         private AudioClipsConfig clipsConfig;
         public AudioClipsConfig clips => clipsConfig;
+        
+        [SerializeField] 
+        private PooledAudioSource sfxPrefab;
         
         [SerializeField] 
         private int defaultPoolSize = 20;
@@ -18,8 +26,7 @@ namespace Core.Scripts
         [Header("Music Channel")] 
         [SerializeField]
         private AudioSource musicSource;
-
-        // The Pool
+        
         private ObjectPool<PooledAudioSource> _sfxPool;
 
         protected override void Awake()
@@ -35,6 +42,28 @@ namespace Core.Scripts
         {
             // Create the pool, parenting objects to this AudioManager to keep hierarchy clean
             _sfxPool = new ObjectPool<PooledAudioSource>(sfxPrefab, defaultPoolSize, transform);
+        }
+        
+        public void SetVolumes(float master, float music, float sfx)
+        {
+            loadedAudioSave.masterVolume = master;
+            loadedAudioSave.musicVolume = music;
+            loadedAudioSave.sfxVolume = sfx;
+
+            UpdateMixer();
+        }
+
+        private void UpdateMixer()
+        {
+            // Convert 0-1 linear value to Decibels
+            // 0.0001f ensures we don't Log(0) which causes errors
+            float masterdB = Mathf.Log10(Mathf.Max(0.0001f, loadedAudioSave.masterVolume)) * 20;
+            float musicdB = Mathf.Log10(Mathf.Max(0.0001f, loadedAudioSave.musicVolume)) * 20;
+            float sfxdB = Mathf.Log10(Mathf.Max(0.0001f, loadedAudioSave.sfxVolume)) * 20;
+
+            mainMixer.SetFloat("MasterVol", masterdB);
+            mainMixer.SetFloat("MusicVol", musicdB);
+            mainMixer.SetFloat("SFXVol", sfxdB);
         }
 
         #region Music Logic
@@ -105,5 +134,34 @@ namespace Core.Scripts
         }
 
         #endregion
+        
+        public override string SaveData()
+        {
+            return loadedAudioSave.GetData();
+        }
+
+        protected override void LoadData()
+        {
+            base.LoadData();
+            
+            loadedAudioSave = new AudioManagerSaveObject();
+            SaveSingleton.instance.TryLoadSavedData(saveID, loadedAudioSave);
+            UpdateMixer();
+        }
+        
+        [Serializable]
+        public class AudioManagerSaveObject : SaveObject<AudioManagerSaveObject>
+        {
+            public float masterVolume;
+            public float sfxVolume;
+            public float musicVolume;
+
+            public AudioManagerSaveObject()
+            {
+                masterVolume = .5f;
+                sfxVolume = .5f;
+                musicVolume = .5f;
+            }
+        }
     }
 }

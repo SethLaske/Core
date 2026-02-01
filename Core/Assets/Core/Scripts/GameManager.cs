@@ -19,6 +19,8 @@ namespace Core.Scripts
         {
             base.DoFirstUpdate();
             
+            AudioManager.instance.DoFirstUpdate();
+            
             coreStats.DoFirstUpdate();
         }
 
