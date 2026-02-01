@@ -6,7 +6,7 @@ namespace Core.Scripts
     {
         public static T instance { get; private set; }
 
-        public virtual void Awake()
+        protected virtual void Awake()
         {
             if (instance == null)
             {

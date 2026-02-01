@@ -17,7 +17,7 @@ namespace Core.Scripts
 
         private SaveFile activeSaveFile = null;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
 

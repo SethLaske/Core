@@ -8,7 +8,7 @@ namespace Core.Scripts
 
         private CoreStats coreStats;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
 
@@ -46,6 +46,7 @@ namespace Core.Scripts
 
             if (Input.GetMouseButtonDown(0))
             {
+                AudioManager.instance.PlaySFX(AudioManager.instance.clips.testClip);
                 new Interval(1, 2, 
                     () => {CoreLogger.Log("Delay Finished"); }, 
                     (t) => {CoreLogger.Log($"Progress {t}"); },
